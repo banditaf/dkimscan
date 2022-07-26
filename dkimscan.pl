@@ -93,9 +93,9 @@ sub response_handler {
     next unless($rr->type eq 'TXT');
     my $h = parse_dkim_txt(join('', $rr->txtdata));
     next unless($h && $h->{'p'});
-    print  "# fqdn: $qname\n" unless ($QUIET);
-    print  "# txt:  " . $rr->rdatastr . "\n" unless ($QUIET);
-    print  "# key:  " . $h->{'p'} . "\n" unless ($QUIET);
+#    print  "# fqdn: $qname\n" unless ($QUIET);
+#    print  "# txt:  " . $rr->rdatastr . "\n" unless ($QUIET);
+#    print  "# key:  " . $h->{'p'} . "\n" unless ($QUIET);
     if (defined($h->{'t'}) && lc($h->{'t'}) eq 'y') {
       $mode = 'TEST';
     } else {
@@ -103,13 +103,16 @@ sub response_handler {
     }
     my $x509 = raw_to_x509($h->{'p'});
     my ($rsa_pub, $pub_fp) = (Crypt::OpenSSL::RSA->new_public_key($x509), sha1_hex(decode_base64($h->{'p'})));
-    printf("# size: %4d bits\n", $rsa_pub->size * 8) unless ($QUIET);
+#    printf("# size: %4d bits\n", $rsa_pub->size * 8) unless ($QUIET);
     my ($n, $e) = $rsa_pub->get_key_parameters;
 
-    print  "# n:    " . $n->to_decimal . "\n" unless ($QUIET);
-    print  "# e:    " . $e->to_decimal . "\n" unless ($QUIET);
-    printf("# fp:   %s %4d %s %s %s\n\n", $pub_fp, $rsa_pub->size * 8, $domain, $selector, $mode);
-    print $rsa_pub->get_public_key_x509_string() . "\n" unless ($QUIET);
+#    print  "# n:    " . $n->to_decimal . "\n" unless ($QUIET);
+#    print  "# e:    " . $e->to_decimal . "\n" unless ($QUIET);
+#    printf("# fp:   %s %4d %s %s %s\n\n", $pub_fp, $rsa_pub->size * 8, $domain, $selector, $mode);
+#    print $rsa_pub->get_public_key_x509_string() . "\n" unless ($QUIET);
+
+    print  "$qname\n" unless ($QUIET);
+
   }
 }
 
@@ -451,20 +454,20 @@ testdkim
 %Ldkim,dk,testdkim,proddkim%%L256,384,512,768,1024,2048%
 
 ; year
-%L,mail,mail-,dkim,dkim-,sel,sel-,d,dk,s,pf%%N2005,2018%
+#%L,mail,mail-,dkim,dkim-,sel,sel-,d,dk,s,pf%%N2005,2018%
 
 ; year and month
-%L,mail,mail-,dkim,dkim-,sel,sel-,d,dk,s%%N2005,2018%%O-%%N01,12%
+#%L,mail,mail-,dkim,dkim-,sel,sel-,d,dk,s%%N2005,2018%%O-%%N01,12%
 
 ; two digit year and month
-%L,scph%%N05,18%%O-%%N01,12%
+#%L,scph%%N05,18%%O-%%N01,12%
 
 ; abrv month and year
-$Ljan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec%%N2005,2018%
+#$Ljan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec%%N2005,2018%
 
 ; year and quarter
-q%N1,4%%O-%%N2005,2018%
-%N2005,2018%%O-%q%N1,4%
+#q%N1,4%%O-%%N2005,2018%
+#%N2005,2018%%O-%q%N1,4%
 
 ; domain-based
 %D%      %L,-dkim,-google%
@@ -475,38 +478,38 @@ q%N1,4%%O-%%N2005,2018%
 %D-3,-1% %L,-dkim,-google%
 
 ; domain and number
-%D%      %O-% %N1,20%
-%D1%     %O-% %N1,20%
-%D2%     %O-% %N1,20%
-%D1,2%   %O-% %N1,20%
-%D-2,-1% %O-% %N1,20%
-%D-3,-1% %O-% %N1,20%
+#%D%      %O-% %N1,20%
+#%D1%     %O-% %N1,20%
+#%D2%     %O-% %N1,20%
+#%D1,2%   %O-% %N1,20%
+#%D-2,-1% %O-% %N1,20%
+#%D-3,-1% %O-% %N1,20%
 
 ; domain and year
-%D%      %O-% %N2005,2018%
-%D1%     %O-% %N2005,2018%
-%D2%     %O-% %N2005,2018%
-%D1,2%   %O-% %N2005,2018% 
-%D-2,-1% %O-% %N2005,2018%
-%D-3,-1% %O-% %N2005,2018%
+#%D%      %O-% %N2005,2018%
+#%D1%     %O-% %N2005,2018%
+#%D2%     %O-% %N2005,2018%
+#%D1,2%   %O-% %N2005,2018% 
+#%D-2,-1% %O-% %N2005,2018%
+#%D-3,-1% %O-% %N2005,2018%
 
 ; observed patterns
-ED%N2005,2018%%O-%%N01,12%
+#ED%N2005,2018%%O-%%N01,12%
 
 ; year, month, day - includes some bogus days
 ; THESE TAKE A WHILE
-%L,mail,mail-,dkim,dkim-,s,dk,d%%N2005,2018%%N01,12%%N01,31%%L,01%
-%L,mail,mail-,dkim,dkim-,s,dk,d%%N2005,2018%-%N01,12%-%N01,31%
+#%L,mail,mail-,dkim,dkim-,s,dk,d%%N2005,2018%%N01,12%%N01,31%%L,01%
+#%L,mail,mail-,dkim,dkim-,s,dk,d%%N2005,2018%-%N01,12%-%N01,31%
 
 ; brute force search of short selectors
 ; REALLY SLOW, some disabled by default
 ; numeric range expansion operator works on letters because perl is awesome
-%Na,z%
-%Na,z%%Na,z%
-#%Na,z%%Na,z%%Na,z%
-%Na,z%%N0,9%
-%Na,z%%Na,z%%N0,9%
-#%Na,z%%Na,z%%Na,z%%N0,9%
-%Na,z%%N0,9%%N0,9%
-#%Na,z%%Na,z%%N0,9%%N0,9%
-#%Na,z%%Na,z%%Na,z%%N0,9%%N0,9%
+#%Na,z%
+#%Na,z%%Na,z%
+##%Na,z%%Na,z%%Na,z%
+#%Na,z%%N0,9%
+#%Na,z%%Na,z%%N0,9%
+##%Na,z%%Na,z%%Na,z%%N0,9%
+#%Na,z%%N0,9%%N0,9%
+##%Na,z%%Na,z%%N0,9%%N0,9%
+##%Na,z%%Na,z%%Na,z%%N0,9%%N0,9%
