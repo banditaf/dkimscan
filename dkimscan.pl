@@ -444,14 +444,14 @@ zendesk1
 ; search rules
 
 ; uncreative
-dk%N01,20%
-dk%N1,9%
-dkim%N01,20%
-dkim%N1,9%
-dkim
-proddkim
-testdkim
-%Ldkim,dk,testdkim,proddkim%%L256,384,512,768,1024,2048%
+#dk%N01,20%
+#dk%N1,9%
+#dkim%N01,20%
+#dkim%N1,9%
+#dkim
+#proddkim
+#testdkim
+#%Ldkim,dk,testdkim,proddkim%%L256,384,512,768,1024,2048%
 
 ; year
 #%L,mail,mail-,dkim,dkim-,sel,sel-,d,dk,s,pf%%N2005,2018%
@@ -470,12 +470,12 @@ testdkim
 #%N2005,2018%%O-%q%N1,4%
 
 ; domain-based
-%D%      %L,-dkim,-google%
-%D1%     %L,-dkim,-google%
-%D2%     %L,-dkim,-google%
-%D1,2%   %L,-dkim,-google%
-%D-2,-1% %L,-dkim,-google%
-%D-3,-1% %L,-dkim,-google%
+#%D%      %L,-dkim,-google%
+#%D1%     %L,-dkim,-google%
+#%D2%     %L,-dkim,-google%
+#%D1,2%   %L,-dkim,-google%
+#%D-2,-1% %L,-dkim,-google%
+#%D-3,-1% %L,-dkim,-google%
 
 ; domain and number
 #%D%      %O-% %N1,20%
